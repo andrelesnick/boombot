@@ -1,0 +1,24 @@
+plugins {
+    id'java'
+    id'application'
+    id'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'andre.lesnick'
+version '1.0-SNAPSHOT'
+
+def jdaVersion = '4.2.0_224'
+mainClassName = 'val.bot.Main'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'net.dv8tion:JDA:4.2.0_224'
+    compile 'com.jagrosh:jda-utilities:3.0.5'
+    // jsoup HTML parser library @ https://jsoup.org/
+    //compile 'org.jsoup:jsoup:1.13.1'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+}
