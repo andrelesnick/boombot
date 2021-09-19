@@ -60,7 +60,7 @@ public class WebHelper {
         String formattedID = id.replace("#", "%23").replace(" ", "%20");
         HashMap<String, String> userStats = new HashMap<String, String>();
 
-        driver.navigate().to("https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview?playlist=competitive");
+        driver.navigate().to("https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview?playlist=competitive&season=all");
         WebElement testForValid;
 //        try {
 //            Thread.sleep(5000);
@@ -69,8 +69,8 @@ public class WebHelper {
 //            System.out.println("Thread exception");
 //        }
         try {
-            System.out.println("Attempting to grab stats for " + id);
-                    testForValid = driver.findElement(By.cssSelector("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.main-stats.card.bordered.responsive > div.title > div > h2"));
+            System.out.println("Attempting to grab stats for " + id); // checks if profile username is visible (if not, then profile not public or doesnt exist)
+                    testForValid = driver.findElement(By.cssSelector("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.ph > div.ph__container > div.ph-details > div.ph-details__identifier > span > span.trn-ign__username"));
         }
         // profile is invalid, so check if it's just private or if no profile exists
         catch (org.openqa.selenium.NoSuchElementException n) {
@@ -112,7 +112,7 @@ public class WebHelper {
 
                 }
                 catch (Exception e) {
-                    System.out.println(key + ": " + e);
+                    System.out.println("[ERROR] " + key + ": " + e);
                 }
 
             }
