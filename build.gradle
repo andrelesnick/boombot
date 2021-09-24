@@ -7,7 +7,7 @@ plugins {
 group 'andre.lesnick'
 version '1.0-SNAPSHOT'
 
-def jdaVersion = '4.2.0_224'
+def java.lang.String jdaVersion = '4.2.0_224'
 mainClassName = 'val.bot.Main'
 
 repositories {

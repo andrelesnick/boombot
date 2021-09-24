@@ -227,7 +227,7 @@ public class Messenger extends ListenerAdapter {
                         .addField("Deaths:",stats.get("Deaths"),true)
                         .addField("Assists:",stats.get("Assists"),true)
                         .addField("Headshots:", stats.get("Headshots")+ " **("+stats.get("Headshot %")+"%)**",true)
-                        .addField("Aces:",stats.get("Aces"),true)
+                        .addField("Aces:","N/A",true)
                         .addField("Most Kills:", stats.get("Most Kills"),true)
 
                         .addField("", "**Top Agent:  "+ " "+resources.get(stats.get("top-agent"))+" | ("+stats.get("top-playtime").toUpperCase()
@@ -236,7 +236,7 @@ public class Messenger extends ListenerAdapter {
                         .addField("K/D:", stats.get("top-K/D"), true)
                         .addField("Damage/rd:", stats.get("top-dmg/rd"), true)
                         .addField("","[View full profile here](https://tracker.gg/valorant/profile/riot/" +formattedID+"/overview?playlist=competitive)",false)
-                        .addField("", "\n<:boombotcircle:799139345621188628> Boom Bot | [GitHub](https://i.imgur.com/RpTWqF0.gif)", false)
+                        .addField("", "\n<:boombotcircle:799139345621188628> Boom Bot | [GitHub](https://github.com/andrelesnick/boombot)", false)
                         .build());
     }
     //chooses random color for the menu
