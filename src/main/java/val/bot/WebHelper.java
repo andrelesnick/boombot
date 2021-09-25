@@ -35,13 +35,16 @@ public class WebHelper {
         stats.put("Assists", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.main > div:nth-child(5) > div > div.numbers > span.value");
         stats.put("Rank", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.valorant-highlighted-content__stats > div:nth-child(2) > span.valorant-highlighted-stat__value");
         //stats.put("Aces", ""); // aces all time not shown anymore
+        stats.put("Kills/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.main > div:nth-child(7) > div > div.numbers > span.value");
         stats.put("Most Kills", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.main > div:nth-child(10) > div > div.numbers > span.value");
-        stats.put("Score/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span"); //score per round not shown anymore
+        stats.put("Score/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.main > div:nth-child(6) > div > div.numbers > span.value"); //score per round not shown anymore
+        stats.put("season","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.title > div > h2");
         stats.put("top-agent", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > span");
         stats.put("top-playtime", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span");
         stats.put("top-win%", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span");
-        stats.put("top-K/D", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span");
-        stats.put("top-dmg/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span");
+        stats.put("top-K/D", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(5) > div > span.name");
+        stats.put("top-matches", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(3)");
+        stats.put("top-dmg/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(6) > div > span.name");
         //total # of matches is calculated from wins + losses
         System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/main/resources/chromedriver.exe");
         options = new ChromeOptions();
@@ -54,14 +57,18 @@ public class WebHelper {
             wait = new WebDriverWait(driver, 30);
     }
     //return stats of user with given Riot ID
-    public static HashMap<String, String> getStats(String id) throws IOException, NoSuchElementException, AuthenticationException {
+    public static HashMap<String, String> getStats(String id, HashMap<String,String> parameters) throws IOException, NoSuchElementException, AuthenticationException {
         initializeDriver();
         if (!isValidID(id)) return null;
         int tagIndex = id.indexOf("#");
         String formattedID = id.replace("#", "%23").replace(" ", "%20");
         HashMap<String, String> userStats = new HashMap<String, String>();
-
-        driver.navigate().to("https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview?playlist=competitive&season=all");
+        for (String s: parameters.values()) {
+            System.out.println("Parameter: " + s);
+        }
+        String URL = "https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview"+parameters.get("gamemode")+"&"+parameters.get("season");
+        System.out.println("URL: " + URL);
+        driver.navigate().to(URL);
         WebElement testForValid;
 //        try {
 //            Thread.sleep(5000);
@@ -105,6 +112,10 @@ public class WebHelper {
                     }
                     else if (key.equals("Playtime")) {
                         userStats.put(key, stat.getText().substring(0, stat.getText().length()-10));
+                    }
+                    // exception for KAY/O to remove slash
+                    else if (key.equals("top-agent") && stats.get("top-agent").equals("KAY/O")) {
+                        stats.put("top-agent", "KAYO");
                     }
                     else {
                         userStats.put(key, stat.getText());

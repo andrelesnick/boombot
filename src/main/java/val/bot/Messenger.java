@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.security.sasl.AuthenticationException;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
@@ -17,6 +18,8 @@ public class Messenger extends ListenerAdapter {
     WebHelper wh;
     static String[] colors; //used to select embed colors
     HashMap<String,String> resources;
+    HashMap<String,String> agents;
+    HashMap<String,String> flags;
     public Messenger() {
         colors = new String[]{"#4A90E2","#D0021B","#BD10E0","#5ECA14","#F5A623","#FF0AD5"};
         help = ConfigHelper.initHelp();
@@ -47,22 +50,39 @@ public class Messenger extends ListenerAdapter {
         resources.put("radiant","https://cdn.discordapp.com/attachments/798400435018661930/798408564548567090/radiant.png");
         resources.put("unranked","https://cdn.discordapp.com/attachments/798400435018661930/798408989029302302/chicken.png");
         resources.put("boombot","https://cdn.discordapp.com/attachments/798400435018661930/798419122043093003/boombot.png");
+        resources.put("unrated", "https://cdn.discordapp.com/attachments/798400435018661930/891219477516140555/UI_Icon_Modes_Competitive.png");
 
-        resources.put("boombotcircle", "<:boombotcircle:799139345621188628>");
-        resources.put("Omen","<:omen:798399553635745793>");
-        resources.put("Breach","<:breach:798399553635745833>");
-        resources.put("Killjoy","<:killjoy:798399553837334608>");
-        resources.put("Brimstone","<:brimstone:798399553798799370>");
-        resources.put("Phoenix","<:phoenix:798399554277343253>");
-        resources.put("Jett","<:jett:798399553790410772>");
-        resources.put("Viper","<:viper:798399553945731112>");
-        resources.put("Reyna","<:reyna:798399553794867231>");
-        resources.put("Cypher","<:cypher:798399553711636521>");
-        resources.put("Skye","<:skye:798399554243395625>");
-        resources.put("Sage","<:sage:798399553941274676>");
-        resources.put("Raze","<:raze:798399553463779349>");
-        resources.put("Sova","<:sova:798399553950449684>");
-        resources.put("Yoru", "<:yoru:799127818122297354>");
+        agents = new HashMap<String,String>();
+        agents.put("boombotcircle", "<:boombotcircle:799139345621188628>");
+        agents.put("Omen","<:omen:798399553635745793>");
+        agents.put("Breach","<:breach:798399553635745833>");
+        agents.put("Killjoy","<:killjoy:798399553837334608>");
+        agents.put("Brimstone","<:brimstone:798399553798799370>");
+        agents.put("Phoenix","<:phoenix:798399554277343253>");
+        agents.put("Jett","<:jett:798399553790410772>");
+        agents.put("Viper","<:viper:798399553945731112>");
+        agents.put("Reyna","<:reyna:798399553794867231>");
+        agents.put("Cypher","<:cypher:798399553711636521>");
+        agents.put("Skye","<:skye:798399554243395625>");
+        agents.put("Sage","<:sage:798399553941274676>");
+        agents.put("Raze","<:raze:798399553463779349>");
+        agents.put("Sova","<:sova:798399553950449684>");
+        agents.put("Yoru", "<:yoru:799127818122297354>");
+        agents.put("Astra", "<:astra:890802324853886999>");
+        agents.put("KAYO", "<:kayo:890802325147496459>");
+
+        flags = new HashMap<String,String>();
+        flags.put("e1a1","?season=3f61c772-4560-cd3f-5d3f-a7ab5abda6b3");
+        flags.put("e1a2","?season=0530b9c4-4980-f2ee-df5d-09864cd00542");
+        flags.put("e1a3","?season=46ea6166-4573-1128-9cea-60a15640059b");
+        flags.put("e2a1","?season=97b6e739-44cc-ffa7-49ad-398ba502ceb0");
+        flags.put("e2a2","?season=ab57ef51-4e59-da91-cc8d-51a5a2b9b8ff");
+        flags.put("e2a3","?season=52e9749a-429b-7060-99fe-4595426a0cf7");
+        flags.put("e3a1","?season=2a27e5d2-4d30-c9e2-b15a-93b8909a442c");
+        flags.put("e3a2","");
+        flags.put("c","?playlist=competitive");
+        flags.put("u","?playlist=unrated");
+
 
     }
     @Override
@@ -153,8 +173,35 @@ public class Messenger extends ListenerAdapter {
         }
         if (msg.startsWith(pref+"stats")) {
             int idStart = msg.indexOf(" ") + 1;
+            int firstFlag = msg.indexOf(" -");
+            if (idStart == firstFlag + 1) { //if no ID specified but there are flags, set idStart to 0
+                idStart = 0;
+            }
+            //check for flags
+            String[] split = msg.split(" ");
+            ArrayList<String> sflags = new ArrayList<String>();
+            for (String s: split) {
+                if (s.startsWith("-")) {
+                    sflags.add(s.substring(1).toLowerCase());
+                }
+            }
+
+            HashMap<String,String> parameters = new HashMap<String,String>();
+            parameters.put("gamemode", "?playlist=competitive");
+            parameters.put("season", "?season=all");
+            for (String s: sflags) {
+                if (flags.get(s) != null) {
+                    if (s.startsWith("e")) {
+                        parameters.put("season", flags.get(s));
+                    }
+                    else if (s.length() == 1) {
+                        parameters.put("gamemode", flags.get(s));
+                    }
+                }
+            }
+
             String profile = null;
-            if (idStart == 0) {
+            if (idStart == 0) { //no space, so just ;;stats
                 if (ConfigHelper.getUser(author.getId()) == null) {
                     channel.sendMessage("Error: Riot ID not found. Please link one by typing 'link [Riot ID]'").queue();
                 }
@@ -162,16 +209,24 @@ public class Messenger extends ListenerAdapter {
                     profile = ConfigHelper.getUser(author.getId());
                 }
             }
-            else if (idStart > 0 && WebHelper.isValidID(msg.substring(idStart))) {
-                profile = msg.substring(idStart);
+            else if (idStart > 0 && WebHelper.isValidID(msg.substring(idStart,firstFlag))) {
+                profile = msg.substring(idStart,firstFlag);
             }
+//            else if (!sflags.isEmpty()) {
+//                if (ConfigHelper.getUser(author.getId()) == null) {
+//                    channel.sendMessage("Error: Riot ID not found. Please link one by typing 'link [Riot ID]'").queue();
+//                }
+//                else {
+//                    profile = ConfigHelper.getUser(author.getId());
+//                }
+//            }
             else {
                 channel.sendMessage("Error: Incorrect usage. Perhaps the ID is wrong?").queue();
             }
             if (profile != null) {
                 try {
                     channel.sendMessage("Fetching stats for `" + profile + "`...").queue();
-                    HashMap<String,String> stats = WebHelper.getStats(profile);
+                    HashMap<String,String> stats = WebHelper.getStats(profile, parameters);
 //                    String str = "```\n";
 //                    for (String s: stats.keySet()) {
 //                        str += s + ": " + stats.get(s) + "\n";
@@ -195,20 +250,26 @@ public class Messenger extends ListenerAdapter {
 
             }
         }
+        for (String agent: agents.keySet()) {
+            if(msg.startsWith(pref+agent.toLowerCase())) {
+                channel.sendMessage(agents.get(agent)).queue();
+            }
+        }
 
     }
     //generates an embedded menu with stats
     public MessageBuilder statsMenu(HashMap<String,String> stats, String id) {
-        String rank = stats.get("Rank").toLowerCase();
+            String rank = (stats.get("Rank") != null) ? stats.get("Rank").toLowerCase() : "unrated";
         String rankImg = "unranked";
         String formattedID = id.replace("#", "%23").replace(" ", "%20");
+        String gamemode = (!rank.equals("unrated")) ? "Ranked" : "Unrated";
         if (resources.containsKey(rank)) {
             rankImg = rank;
         }
         return new MessageBuilder()
                 //.append("Here are [User]'s competitive stats!'")
                 .setEmbed(new EmbedBuilder()
-                        .setTitle("**"+id+"'s Ranked Profile**", resources.get("chicken"))
+                        .setTitle("**"+id+"'s "+gamemode+" Profile**", resources.get("chicken"))
                         .setDescription(
                         "\n\n**"+stats.get("Playtime")+" | "+stats.get("Wins")+"W "+stats.get("Losses")+"L ("+stats.get("Win %")+")**")
                         .setColor(pickColor())
@@ -226,16 +287,17 @@ public class Messenger extends ListenerAdapter {
                         .addField("Kills:",stats.get("Kills"),true)
                         .addField("Deaths:",stats.get("Deaths"),true)
                         .addField("Assists:",stats.get("Assists"),true)
-                        .addField("Headshots:", stats.get("Headshots")+ " **("+stats.get("Headshot %")+"%)**",true)
-                        .addField("Aces:","N/A",true)
+                        .addField("Headshots:", stats.get("Headshots")+ " ("+stats.get("Headshot %")+")",true)
+                        .addField("Kills/rd:",stats.get("Kills/rd"),true)
                         .addField("Most Kills:", stats.get("Most Kills"),true)
 
-                        .addField("", "**Top Agent:  "+ " "+resources.get(stats.get("top-agent"))+" | ("+stats.get("top-playtime").toUpperCase()
+                        .addField("", "**Top Agent:  "+ " "+agents.get(stats.get("top-agent"))+" | ("+stats.get("top-playtime").toUpperCase()
                                 + ")**", false)
                         //.addField("", , true)
                         .addField("K/D:", stats.get("top-K/D"), true)
+                        .addField("Matches:", stats.get("top-matches"), true)
                         .addField("Damage/rd:", stats.get("top-dmg/rd"), true)
-                        .addField("","[View full profile here](https://tracker.gg/valorant/profile/riot/" +formattedID+"/overview?playlist=competitive)",false)
+                        .addField("","[View full profile here at Tracker.gg](https://tracker.gg/valorant/profile/riot/" +formattedID+"/overview?playlist=competitive)",false)
                         .addField("", "\n<:boombotcircle:799139345621188628> Boom Bot | [GitHub](https://github.com/andrelesnick/boombot)", false)
                         .build());
     }
