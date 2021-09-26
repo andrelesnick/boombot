@@ -2,6 +2,7 @@ package val.bot;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -50,10 +51,10 @@ public class Messenger extends ListenerAdapter {
         resources.put("radiant","https://cdn.discordapp.com/attachments/798400435018661930/798408564548567090/radiant.png");
         resources.put("unranked","https://cdn.discordapp.com/attachments/798400435018661930/798408989029302302/chicken.png");
         resources.put("boombot","https://cdn.discordapp.com/attachments/798400435018661930/798419122043093003/boombot.png");
+        resources.put("boombotcircle", "<:boombotcircle:799139345621188628>");
         resources.put("unrated", "https://cdn.discordapp.com/attachments/798400435018661930/891219477516140555/UI_Icon_Modes_Competitive.png");
 
         agents = new HashMap<String,String>();
-        agents.put("boombotcircle", "<:boombotcircle:799139345621188628>");
         agents.put("Omen","<:omen:798399553635745793>");
         agents.put("Breach","<:breach:798399553635745833>");
         agents.put("Killjoy","<:killjoy:798399553837334608>");
@@ -120,22 +121,24 @@ public class Messenger extends ListenerAdapter {
                 channel.sendMessage("Successfully linked your Discord profile to **" + split[1]+"**!").queue();
             }
         }
-        if (msg.startsWith(pref + "pref")) {
-            String[] split = msg.split(" ");
-            if (split.length != 2) {
-                channel.sendMessage("Error: prefix not specified or it has a space").queue();
-            }
-            else if (split[1].equals(pref)) {
-                channel.sendMessage("Error: you already have this prefix").queue();
-            }
-            else if (!isGuild) {
-                channel.sendMessage("Sorry, you can't change your prefix in DMs :(").queue();
+        if (msg.startsWith(pref + "prefix")) {
+            if (!message.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                channel.sendMessage("Error: only an administrator may change the command prefix.").queue();
             }
             else {
-                ConfigHelper.editItem("server,pref", guild.getId(), split[1]);
-                ConfigHelper.initializeVars();
-                pref = ConfigHelper.getPref(guild.getId());
-                channel.sendMessage("Prefix successfully changed to '"+pref+"'").queue();
+                String[] split = msg.split(" ");
+                if (split.length != 2) {
+                    channel.sendMessage("Error: prefix not specified or it has a space").queue();
+                } else if (split[1].equals(pref)) {
+                    channel.sendMessage("Error: you already have this prefix").queue();
+                } else if (!isGuild) {
+                    channel.sendMessage("Sorry, you can't change your prefix in DMs :(").queue();
+                } else {
+                    ConfigHelper.editItem("server,pref", guild.getId(), split[1]);
+                    ConfigHelper.initializeVars();
+                    pref = ConfigHelper.getPref(guild.getId());
+                    channel.sendMessage("Prefix successfully changed to '" + pref + "'").queue();
+                }
             }
         }
 
@@ -209,8 +212,8 @@ public class Messenger extends ListenerAdapter {
                     profile = ConfigHelper.getUser(author.getId());
                 }
             }
-            else if (idStart > 0 && WebHelper.isValidID(msg.substring(idStart,firstFlag))) {
-                profile = msg.substring(idStart,firstFlag);
+            else if (idStart > 0 && WebHelper.isValidID(msg.substring(idStart,(firstFlag != -1) ? firstFlag : msg.length()))) {
+                profile = msg.substring(idStart,(firstFlag != -1) ? firstFlag : msg.length());
             }
 //            else if (!sflags.isEmpty()) {
 //                if (ConfigHelper.getUser(author.getId()) == null) {
@@ -250,11 +253,20 @@ public class Messenger extends ListenerAdapter {
 
             }
         }
+        //agent emojis
         for (String agent: agents.keySet()) {
             if(msg.startsWith(pref+agent.toLowerCase())) {
                 channel.sendMessage(agents.get(agent)).queue();
             }
         }
+        if (msg.startsWith(pref+"emojis")) {
+            String m = "";
+            for (String agent: agents.values()) {
+                m += agent+" ";
+            }
+            channel.sendMessage(m).queue();
+        }
+
 
     }
     //generates an embedded menu with stats
@@ -297,7 +309,7 @@ public class Messenger extends ListenerAdapter {
                         .addField("K/D:", stats.get("top-K/D"), true)
                         .addField("Matches:", stats.get("top-matches"), true)
                         .addField("Damage/rd:", stats.get("top-dmg/rd"), true)
-                        .addField("","[View full profile here at Tracker.gg](https://tracker.gg/valorant/profile/riot/" +formattedID+"/overview?playlist=competitive)",false)
+                        .addField("","[View full profile here at tracker.gg](https://tracker.gg/valorant/profile/riot/" +formattedID+"/overview?playlist=competitive)",false)
                         .addField("", "\n<:boombotcircle:799139345621188628> Boom Bot | [GitHub](https://github.com/andrelesnick/boombot)", false)
                         .build());
     }

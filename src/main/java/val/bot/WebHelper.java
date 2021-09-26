@@ -114,8 +114,8 @@ public class WebHelper {
                         userStats.put(key, stat.getText().substring(0, stat.getText().length()-10));
                     }
                     // exception for KAY/O to remove slash
-                    else if (key.equals("top-agent") && stats.get("top-agent").equals("KAY/O")) {
-                        stats.put("top-agent", "KAYO");
+                    else if (stat.getText().toLowerCase().contains("kay")) {
+                        userStats.put("top-agent", "KAYO");
                     }
                     else {
                         userStats.put(key, stat.getText());

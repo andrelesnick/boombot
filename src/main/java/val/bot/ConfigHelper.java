@@ -170,7 +170,7 @@ public class ConfigHelper {
         temp.put("link", "Links your Discord profile to a Riot ID\nUsage: link [Riot ID]");
         temp.put("profile", "Returns your Riot ID, if you have one set.");
         temp.put("stats", "Displays your Valorant Competitive stats.\nUsage: stats [Riot ID]\nLeave ID blank to display your own stats");
-        temp.put("pref", "change the command prefix\nDefault is \";;\"\nUsage: pref [prefix]");
+        temp.put("prefix", "change the command prefix\nDefault is \";;\"\nUsage: prefix [prefix]");
         temp.put("emojis", "Send an emoji of an agent with [prefix][agent\nExample: ;;raze ");
         return temp;
     }
