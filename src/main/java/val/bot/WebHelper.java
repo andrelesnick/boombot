@@ -21,6 +21,9 @@ public class WebHelper {
 
     public static void initializeVars() {
         stats = new HashMap<String,String>();
+        //season dropdown menu
+        stats.put("season-selection", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div");
+
         stats.put("Playtime", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.title > div > div > span.playtime");
         stats.put("Damage/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.giant-stats > div:nth-child(1) > div > div.numbers > span.value");
         stats.put("KDR", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.giant-stats > div:nth-child(2) > div > div.numbers > span.value");
@@ -66,7 +69,8 @@ public class WebHelper {
         for (String s: parameters.values()) {
             System.out.println("Parameter: " + s);
         }
-        String URL = "https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview"+parameters.get("gamemode")+"&"+parameters.get("season");
+        // String defaultURL = "https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview"+parameters.get("gamemode")+"&season=all";
+        String URL = "https://tracker.gg/valorant/profile/riot/"+formattedID+"/overview"+parameters.get("gamemode")+parameters.get("season");
         System.out.println("URL: " + URL);
         driver.navigate().to(URL);
         WebElement testForValid;

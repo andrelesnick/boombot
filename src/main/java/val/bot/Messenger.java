@@ -73,16 +73,29 @@ public class Messenger extends ListenerAdapter {
         agents.put("KAYO", "<:kayo:890802325147496459>");
 
         flags = new HashMap<String,String>();
-        flags.put("e1a1","?season=3f61c772-4560-cd3f-5d3f-a7ab5abda6b3");
-        flags.put("e1a2","?season=0530b9c4-4980-f2ee-df5d-09864cd00542");
-        flags.put("e1a3","?season=46ea6166-4573-1128-9cea-60a15640059b");
-        flags.put("e2a1","?season=97b6e739-44cc-ffa7-49ad-398ba502ceb0");
-        flags.put("e2a2","?season=ab57ef51-4e59-da91-cc8d-51a5a2b9b8ff");
-        flags.put("e2a3","?season=52e9749a-429b-7060-99fe-4595426a0cf7");
-        flags.put("e3a1","?season=2a27e5d2-4d30-c9e2-b15a-93b8909a442c");
+        flags.put("e1a1","&season=3f61c772-4560-cd3f-5d3f-a7ab5abda6b3");
+        flags.put("e1a2","&season=0530b9c4-4980-f2ee-df5d-09864cd00542");
+        flags.put("e1a3","&season=46ea6166-4573-1128-9cea-60a15640059b");
+        flags.put("e2a1","&season=97b6e739-44cc-ffa7-49ad-398ba502ceb0");
+        flags.put("e2a2","&season=ab57ef51-4e59-da91-cc8d-51a5a2b9b8ff");
+        flags.put("e2a3","&season=52e9749a-429b-7060-99fe-4595426a0cf7");
+        flags.put("e3a1","&season=2a27e5d2-4d30-c9e2-b15a-93b8909a442c");
         flags.put("e3a2","");
         flags.put("c","?playlist=competitive");
         flags.put("u","?playlist=unrated");
+
+//        flags = new HashMap<String,String>();
+//        flags.put("e1a1","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(9)");
+//        flags.put("e1a2","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(8)");
+//        flags.put("e1a3","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(7)");
+//        flags.put("e2a1","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(6)");
+//        flags.put("e2a2","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(5)");
+//        flags.put("e2a3","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(4)");
+//        flags.put("e3a1","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(3)");
+//        flags.put("e3a2","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(2)");
+//        flags.put("all", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(1)");
+//        flags.put("c","?playlist=competitive");
+//        flags.put("u","?playlist=unrated");
 
 
     }
@@ -191,7 +204,7 @@ public class Messenger extends ListenerAdapter {
 
             HashMap<String,String> parameters = new HashMap<String,String>();
             parameters.put("gamemode", "?playlist=competitive");
-            parameters.put("season", "?season=all");
+            parameters.put("season", "&season=all");
             for (String s: sflags) {
                 if (flags.get(s) != null) {
                     if (s.startsWith("e")) {
