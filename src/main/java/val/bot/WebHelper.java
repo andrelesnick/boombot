@@ -18,6 +18,7 @@ public class WebHelper {
     private static ChromeOptions options;
     private static WebDriver driver;
     private static WebDriverWait wait;
+    private static String noTopAgents;
 
     public static void initializeVars() {
         stats = new HashMap<String,String>();
@@ -42,6 +43,8 @@ public class WebHelper {
         stats.put("Most Kills", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.main > div:nth-child(10) > div > div.numbers > span.value");
         stats.put("Score/rd", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.main > div:nth-child(6) > div > div.numbers > span.value"); //score per round not shown anymore
         stats.put("season","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.segment-stats.area-main-stats.card.bordered.header-bordered.responsive > div.title > div > h2");
+        // checks if episode is 1 or 2, no top agent data available
+        //stats.put("top-check", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div");
         stats.put("top-agent", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(1) > div > span");
         stats.put("top-playtime", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span");
         stats.put("top-win%", "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.top-agents.area-top-agents > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div > span");
@@ -53,6 +56,8 @@ public class WebHelper {
         options = new ChromeOptions();
         options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200","--ignore-certificate-errors",
                 "--disable-extensions","--no-sandbox","--disable-dev-shm-usage");
+        // seasons with no top agent data
+        noTopAgents = "&season=3f61c772-4560-cd3f-5d3f-a7ab5abda6b3,&season=0530b9c4-4980-f2ee-df5d-09864cd00542,&season=46ea6166-4573-1128-9cea-60a15640059b,&season=97b6e739-44cc-ffa7-49ad-398ba502ceb0,&season=ab57ef51-4e59-da91-cc8d-51a5a2b9b8ff,&season=52e9749a-429b-7060-99fe-4595426a0cf7";
     }
     //inits webdriver if closed
     private static void initializeDriver() {
@@ -74,15 +79,9 @@ public class WebHelper {
         System.out.println("URL: " + URL);
         driver.navigate().to(URL);
         WebElement testForValid;
-//        try {
-//            Thread.sleep(5000);
-//        }
-//        catch (Exception e) {
-//            System.out.println("Thread exception");
-//        }
         try {
             System.out.println("Attempting to grab stats for " + id); // checks if profile username is visible (if not, then profile not public or doesnt exist)
-                    testForValid = driver.findElement(By.cssSelector("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.ph > div.ph__container > div.ph-details > div.ph-details__identifier > span > span.trn-ign__username"));
+            testForValid = driver.findElement(By.cssSelector("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.ph > div.ph__container > div.ph-details > div.ph-details__identifier > span > span.trn-ign__username"));
         }
         // profile is invalid, so check if it's just private or if no profile exists
         catch (org.openqa.selenium.NoSuchElementException n) {
@@ -109,22 +108,39 @@ public class WebHelper {
             for (String key : stats.keySet()) {
                 lastKey = key;
                 try {
-                    stat = driver.findElement(By.cssSelector(stats.get(key)));
-                    //special cases
-                    if (key.equals("Losses")) { //cuts off non-number characters
-                        userStats.put(key, stat.getText().substring(0, stat.getText().length()-2));
-                    }
-                    else if (key.equals("Playtime")) {
-                        userStats.put(key, stat.getText().substring(0, stat.getText().length()-10));
-                    }
-                    // exception for KAY/O to remove slash
-                    else if (stat.getText().toLowerCase().contains("kay")) {
-                        userStats.put("top-agent", "KAYO");
+                    // if season has no top agent data, don't select element
+                    if (key.contains("top") && parameters.get("season").length() != 0 && (noTopAgents.contains(parameters.get("season")))) {
+                        userStats.put(key, null);
                     }
                     else {
-                        userStats.put(key, stat.getText());
+                        stat = driver.findElement(By.cssSelector(stats.get(key)));
+                        //special cases
+
+                        if (key.equals("Losses")) { //cuts off non-number characters
+                            userStats.put(key, stat.getText().substring(0, stat.getText().length()-2));
+                        }
+                        else if (key.equals("Playtime")) {
+                            userStats.put(key, stat.getText().substring(0, stat.getText().length()-10));
+                        }
+                        // exception for KAY/O to remove slash
+                        else if (stat.getText().toLowerCase().contains("kay")) {
+                            userStats.put("top-agent", "KAYO");
+                        }
+                        else if (key.equals("season")) {
+                            //System.out.println("SEASONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN\n"+stat.getText());
+                            String content = " | All-time";
+                            int index = stat.getText().indexOf(":");
+                            if (index != -1) {
+                                content = " | " + stat.getText().substring(0, index+4);
+                            }
+                            //System.out.println("Content: " + content);
+                            userStats.put(key, content);
+                        }
+                        else {
+                            userStats.put(key, stat.getText());
+                        }
+                        System.out.println(key + ": " + userStats.get(key));
                     }
-                    System.out.println(key + ": " + userStats.get(key));
 
                 }
                 catch (Exception e) {
@@ -139,7 +155,7 @@ public class WebHelper {
         }
 
         //add up wins and losses for total matches
-        String matches = userStats.get("Matches");
+        String matches = userStats.get("Matches").replace(",", "");
         int losses = Integer.parseInt(matches.substring(0, matches.length()-8)) - Integer.parseInt(userStats.get("Wins"));
         userStats.put("Losses", ""+losses);
         driver.close();

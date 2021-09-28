@@ -53,6 +53,7 @@ public class Messenger extends ListenerAdapter {
         resources.put("boombot","https://cdn.discordapp.com/attachments/798400435018661930/798419122043093003/boombot.png");
         resources.put("boombotcircle", "<:boombotcircle:799139345621188628>");
         resources.put("unrated", "https://cdn.discordapp.com/attachments/798400435018661930/891219477516140555/UI_Icon_Modes_Competitive.png");
+        resources.put("sad crab", "https://cdn.discordapp.com/attachments/798400435018661930/892260668491858000/valorant-spray-sad-crab.png");
 
         agents = new HashMap<String,String>();
         agents.put("Omen","<:omen:798399553635745793>");
@@ -101,6 +102,8 @@ public class Messenger extends ListenerAdapter {
     }
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        boolean debug = false; //if true, *all* messages from *all* channels are printed in the console.
+
         User author = event.getAuthor();                //The user that sent the message
         Message message = event.getMessage();           //The message that was received.
         MessageChannel channel = event.getChannel();     //This is the MessageChannel that the message was sent to.
@@ -108,13 +111,14 @@ public class Messenger extends ListenerAdapter {
         Guild guild = null;
         boolean isGuild = false;
         boolean bot = author.isBot();                    //This boolean is useful to determine if the User that
+
         // sent the Message is a BOT or not!
         if (channel.getType().equals(ChannelType.TEXT)) {
             isGuild = true;
             guild = event.getGuild();
         }
 
-        if (isGuild && !bot) {
+        if (debug && isGuild && !bot) {
             //simple output for all messages
             System.out.println("[" + guild.getName() + "] " + "Name: " + author.getName() + " | " + channel.getName() + " (" + channel.getId() + ")\nID: " + author.getId() + "\n   " + message.getContentDisplay() + "\n");
         }
@@ -291,40 +295,50 @@ public class Messenger extends ListenerAdapter {
         if (resources.containsKey(rank)) {
             rankImg = rank;
         }
-        return new MessageBuilder()
-                //.append("Here are [User]'s competitive stats!'")
-                .setEmbed(new EmbedBuilder()
-                        .setTitle("**"+id+"'s "+gamemode+" Profile**", resources.get("chicken"))
-                        .setDescription(
-                        "\n\n**"+stats.get("Playtime")+" | "+stats.get("Wins")+"W "+stats.get("Losses")+"L ("+stats.get("Win %")+")**")
-                        .setColor(pickColor())
-                        .setThumbnail(resources.get(rankImg))
-                        //.setTimestamp()
-                        //.setImage("https://cdn.discordapp.com/embed/avatars/0.png")
-                        //.setAuthor("Viewing "+id+"'s competitive stats", resources.get("chicken"), resources.get("chicken"))
+        //Radiant
+        else if (rank.contains("rr")) {
+            rankImg = "radiant";
+        }
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("**"+id+"'s "+gamemode+" Profile**", resources.get("chicken"))
+                .setDescription(
+                        "\n\n**"+stats.get("Playtime")+" | "+stats.get("Wins")+"W "+stats.get("Losses")+"L ("+stats.get("Win %")+")" + stats.get("season") + "**")
+                .setColor(pickColor())
+                .setThumbnail(resources.get(rankImg))
+                //.setTimestamp()
+                //.setImage("https://cdn.discordapp.com/embed/avatars/0.png")
+                //.setAuthor("Viewing "+id+"'s competitive stats", resources.get("chicken"), resources.get("chicken"))
 //                        .addField("", "**K/D: **" + stats.get("KDR"), true)
 //                        .addField("", "**ADR: **"+stats.get("Damage/rd"), true)
 //                        .addField("", "**Kills: **"+stats.get("Kills"), true)
 //                        .addField("", "**Deaths: **"+stats.get("Deaths"), true)
-                        .addField("K/D:", stats.get("KDR"),true)
-                        .addField("Score/rd:",stats.get("Score/rd"),true)
-                        .addField("Damage/rd:", stats.get("Damage/rd"),true)
-                        .addField("Kills:",stats.get("Kills"),true)
-                        .addField("Deaths:",stats.get("Deaths"),true)
-                        .addField("Assists:",stats.get("Assists"),true)
-                        .addField("Headshots:", stats.get("Headshots")+ " ("+stats.get("Headshot %")+")",true)
-                        .addField("Kills/rd:",stats.get("Kills/rd"),true)
-                        .addField("Most Kills:", stats.get("Most Kills"),true)
+                .addField("K/D:", stats.get("KDR"),true)
+                .addField("Score/rd:",stats.get("Score/rd"),true)
+                .addField("Damage/rd:", stats.get("Damage/rd"),true)
+                .addField("Kills:",stats.get("Kills"),true)
+                .addField("Deaths:",stats.get("Deaths"),true)
+                .addField("Assists:",stats.get("Assists"),true)
+                .addField("Headshots:", stats.get("Headshots")+ " ("+stats.get("Headshot %")+")",true)
+                .addField("Kills/rd:",stats.get("Kills/rd"),true)
+                .addField("Most Kills:", stats.get("Most Kills"),true);
 
-                        .addField("", "**Top Agent:  "+ " "+agents.get(stats.get("top-agent"))+" | ("+stats.get("top-playtime").toUpperCase()
-                                + ")**", false)
-                        //.addField("", , true)
-                        .addField("K/D:", stats.get("top-K/D"), true)
-                        .addField("Matches:", stats.get("top-matches"), true)
-                        .addField("Damage/rd:", stats.get("top-dmg/rd"), true)
+        if (!(stats.get("top-agent") == null)) {
+                embed
+                .addField("", "**Top Agent:  "+ " "+agents.get(stats.get("top-agent"))+" | ("+stats.get("top-playtime").toUpperCase()
+                        + ")**", false)
+                //.addField("", , true)
+                .addField("K/D:", stats.get("top-K/D"), true)
+                .addField("Matches:", stats.get("top-matches"), true)
+                .addField("Damage/rd:", stats.get("top-dmg/rd"), true);
+        }
+        else {
+            embed.addField("", "*Top agent stats unavailable for Episodes 1 and 2*", false);
+            //embed.setImage(resources.get("sad crab"));
+        }
+                embed
                         .addField("","[View full profile here at tracker.gg](https://tracker.gg/valorant/profile/riot/" +formattedID+"/overview?playlist=competitive)",false)
-                        .addField("", "\n<:boombotcircle:799139345621188628> Boom Bot | [GitHub](https://github.com/andrelesnick/boombot)", false)
-                        .build());
+                .addField("", "\n<:boombotcircle:799139345621188628> Boom Bot | [GitHub](https://github.com/andrelesnick/boombot)", false);
+        return new MessageBuilder().setEmbed(embed.build());
     }
     //chooses random color for the menu
     public static Color pickColor() {
