@@ -1,4 +1,4 @@
-<img align="right" src="https://i.imgur.com/QclNPx4.png" height="128" width="128">
+<img align="right" src="https://i.imgur.com/Olky6Uv.png" height="128" width="128">
 
 # boombot
 A Discord bot to view Valorant player stats!
