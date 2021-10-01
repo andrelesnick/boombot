@@ -82,8 +82,11 @@ public class Messenger extends ListenerAdapter {
         flags.put("e2a3","&season=52e9749a-429b-7060-99fe-4595426a0cf7");
         flags.put("e3a1","&season=2a27e5d2-4d30-c9e2-b15a-93b8909a442c");
         flags.put("e3a2","");
+        flags.put("latest","");
         flags.put("c","?playlist=competitive");
         flags.put("u","?playlist=unrated");
+        flags.put("all", "&season=all");
+
 
 //        flags = new HashMap<String,String>();
 //        flags.put("e1a1","#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div:nth-child(2) > div > div.multi-switch.large.multi-switch--overflow > div > ul > li:nth-child(9)");
@@ -207,8 +210,8 @@ public class Messenger extends ListenerAdapter {
             }
 
             HashMap<String,String> parameters = new HashMap<String,String>();
-            parameters.put("gamemode", "?playlist=competitive");
-            parameters.put("season", "&season=all");
+            parameters.put("gamemode", "?playlist=competitive"); //default is competitive
+            parameters.put("season", ""); //default is latest act
             for (String s: sflags) {
                 if (flags.get(s) != null) {
                     if (s.startsWith("e")) {

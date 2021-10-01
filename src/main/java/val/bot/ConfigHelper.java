@@ -169,7 +169,7 @@ public class ConfigHelper {
         commmands.put("help", "it helps you lol\nUsage: `help [command]`");
         commmands.put("link", "Links your Discord profile to a Riot ID\nUsage: `link [Riot ID]`");
         commmands.put("profile", "Returns your Riot ID, if you have one set.");
-        commmands.put("stats", "Displays your Valorant Competitive stats.\nUsage: `stats [Riot ID]`\nLeave ID blank to display your own stats\nGet unrated stats with \"-u\" or stats from a particular season with \"-e#a#\"\nExample: `;;stats BoomBot#NA1 -u -e2a3`");
+        commmands.put("stats", "Displays your Valorant Competitive stats.\nUsage: `stats [Riot ID]`\nLeave ID blank to display your own stats if you've used `link`\nGet unrated stats with \"-u\", all-time stats with \"-all\", or stats from a particular episode/act with \"-e#a#\"\nExample: `;;stats BoomBot#NA1 -u -e2a3`");
         commmands.put("prefix", "change the command prefix\nDefault is \";;\"\nUsage: `prefix [prefix]`");
         commmands.put("emojis", "Send an emoji of an agent with [prefix][agent\nExample: `;;raze` ");
         return commmands;
